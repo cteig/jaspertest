@@ -1,11 +1,19 @@
 ---
 layout: page
 current: styret
-title: Kjelsås skoles musikkorps
-navigation: true
-logo: 'assets/images/ghost.png'
-class: page-template
+class: 'styret-template'
 subclass: 'post page'
+navigation: True
 ---
 
-<h2>Styret</h2>
+
+
+<ul>
+    {% for author in site.styremedlemmer %}
+    <li>
+        <h2>{{ author.name }}</h2>
+        <h3>{{ author.position }}</h3>
+        <p>{{ author.content | markdownify }}</p>
+    </li>
+    {% endfor %}
+</ul>
