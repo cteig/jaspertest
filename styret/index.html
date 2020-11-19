@@ -1,19 +1,21 @@
 ---
-layout: page
+layout: styret
 current: styret
 class: 'styret-template'
 subclass: 'post page'
 navigation: True
+title: Styret
 ---
 
 
+<!-- The main content area -->
+<main id="site-main" class="site-main outer" role="main">
+    <div class="inner">
+        <div class="post-feed">
+            <!-- The tag below includes the markup for each post - partials/post-card.hbs -->
+            <p>Styret har møte en gang i måneden. Første mandag hver måned, samtidig med fellesøvelsen. Årsmøtet blir arrangert i februar/mars hvert år.</p>
+            {%  include styret-card.html %}
 
-<ul>
-    {% for author in site.styremedlemmer %}
-    <li>
-        <h2>{{ author.name }}</h2>
-        <h3>{{ author.position }}</h3>
-        <p>{{ author.content | markdownify }}</p>
-    </li>
-    {% endfor %}
-</ul>
+    </div>
+</main>
+
