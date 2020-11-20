@@ -1,152 +1,121 @@
----
-layout: default
-current: styret
-class: styret-template
-disqus: false
----
+<!DOCTYPE html>
+<html>
+<head>
 
-<!-- default -->
+    <!-- Document Settings -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-<!-- The tag above means: insert everything in this file
-into the {body} of the default.hbs template -->
+    <!-- Base Meta -->
+    {% include dynamic_title.html %}
+    <title>{% if title %}{{ title }}{% elsif page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Styles'n'Scripts -->
+    <link rel="stylesheet" type="text/css" href="{{ site.baseurl }}assets/built/screen.css" />
+    <link rel="stylesheet" type="text/css" href="{{ site.baseurl }}assets/built/screen.edited.css" />
+    <link rel="stylesheet" type="text/css" href="{{ site.baseurl }}assets/built/syntax.css" />
+    <!-- highlight.js -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+    <style>.hljs { background: none; }</style>
 
-<header class="site-header outer">
-    <div class="inner">
-        {% include site-nav.html %}
-    </div>
-</header>
+    <!--[if IE]>
+    <style>
+        p, ol, ul{
+            width: 100%;
+        }
+        blockquote{
+            width: 100%;
+        }
+    </style>
+    <![endif]-->
 
-<!-- Everything inside the #post tags pulls data from the post -->
-<!-- #post -->
+    <!-- This tag outputs SEO meta+structured data and other important settings -->
+    {% include head.html %}
 
-<main id="site-main" class="site-main outer" role="main">
-    <div class="inner">
+</head>
+<body class="{% if paginator.page > 1 %}paged archive-template{% elsif page.class %}{{ page.class }}{% else %}home-template{% endif %}">
 
-        <article class="post-full {% if page.tags.size > 0 %}{% for tag in page.tags %} tag-{{ tag | slugify: "latin" }}{% endfor %}{% endif %} {{ page.subclass }} {% unless page.cover %}no-image{% endunless %}">
+<div class="site-wrapper">
+    <!-- All the main content gets inserted here, index.hbs, post.hbs, etc -->
+    {{ content }}
 
-            <header class="post-full-header">
-                <section class="post-full-meta">
+    <!-- Previous/next page links - displayed on every page -->
+    {% if paginator.total_posts > site.paginate %}
+    {% if page.class == 'home-template' %}
+    {% include post_pagination.html %}
+    {% elsif page.class == 'page-template' %}
+    {% include post_pagination.html %}
+    {% elsif page.class == 'author-template' %}
+    {% include author_pagination.html %}
+    {% elsif page.class == 'tag-template' %}
+    {% include tag_pagination.html %}
+    {% else %}
+    {% include post_pagination.html %}
+    {% endif %}
+    {% endif %}
 
-                    {% if page.tags.size > 0 %}
-                        <span class="date-divider">/</span>
-                        {% for tag in page.tags %}
-                            {% if forloop.index == page.tags.size %}
-                               <a href='{{ site.baseurl }}tag/{{ tag | slugify: "latin" }}/'>{{ tag | upcase }}</a>
-                            {% else %}
-                               <a href='{{ site.baseurl }}tag/{{ tag | slugify: "latin" }}/'>{{ tag | upcase }}</a>,
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-                </section>
-                <h1 class="post-full-title">{{ page.title }}</h1>
-            </header>
-
-            {% if page.cover %}
-            <figure class="post-full-image" style="background-image: url({{ site.baseurl }}{{ page.cover }})">
-            </figure>
-            {% endif %}
-
-            <section class="post-full-content">
-                <div class="kg-card-markdown">
-                    {{ content }}
-                </div>
-            </section>
-
-
-
-            <!-- If you use Disqus comments, just uncomment this block.
-            The only thing you need to change is "test-apkdzgmqhj" - which
-            should be replaced with your own Disqus site-id. -->
-            {% if site.disqus or page.disqus %}
-                <section class="post-full-comments">
-                    <div id="disqus_thread"></div>
-                    <script>
-                        var disqus_config = function () {
-                            this.page.url = '{{ site.url }}{{ page.url }}';
-                            this.page.identifier = '{{ page.id }}';
-                            this.page.title = '{{ page.title }}';
-                        };
-                        (function() {
-                            var d = document, s = d.createElement('script');
-                            s.src = 'https://{{ site.disqus_shortname }}.disqus.com/embed.js';
-                            s.setAttribute('data-timestamp', +new Date());
-                            (d.head || d.body).appendChild(s);
-                        })();
-                    </script>
-                </section>
-            {% endif %}
-
-        </article>
-
-    </div>
-</main>
-
-<!-- Links to Previous/Next posts -->
-<aside class="read-next outer">
-    <div class="inner">
-        <div class="read-next-feed">
-            {% if page.tags.size > 0 %}
-                {% assign primary = page.tags | first %}
-                {% assign related_posts = 0 %}
-                {% for post in site.posts %}
-                  {% if post.tags.size > 0 %}
-                      {% if post.tags contains primary %}
-                        {% assign related_posts = related_posts | plus: 1 %}
-                      {% endif %}
-                  {% endif %}
-                {% endfor %}
-                {% if related_posts > 1 %}
-                    <article class="read-next-card"
-                        {% if site.cover %}
-                            style="background-image: url({{ site.baseurl }}{{ site.cover }})"
-                        {% else %}
-                            {% if page.cover %}
-                                style="background-image: url(url({{ site.baseurl }}{{ page.cover }})"{% endif %}
-                        {% endif %}
-                    >
-                        <header class="read-next-card-header">
-                            <small class="read-next-card-header-sitetitle">&mdash; {{ site.title }} &mdash;</small>
-                            {% if primary %}
-                                <h3 class="read-next-card-header-title"><a href="{{ site.baseurl }}tag/{{ primary | slugify: "latin" }}/">{{ primary | capitalize }}</a></h3>
-                            {% endif %}
-                        </header>
-                        <div class="read-next-divider">{% include infinity.html %}</div>
-                        <div class="read-next-card-content">
-                            <ul>
-                                {% assign count = 0 %}
-                                {% for post in site.posts %}
-                                  {% if post.tags contains primary %}
-                                    {% if post.title != page.title %}
-                                        {% assign count = count | plus: 1 %}
-                                        {% if count <= 3 %}
-                                            <li><a href="{{ site.baseurl }}{{ post.url | remove_first: '/' }}">{{ post.title }}</a></li>
-                                        {% endif %}
-                                    {% endif %}
-                                  {% endif %}
-                                {% endfor %}
-                            </ul>
-                        </div>
-                        <footer class="read-next-card-footer">
-                            <a href="{{ site.baseurl }}tag/{{ primary | slugify: "latin" }}/">
-                                {% if related_posts > 1 %}
-                                    See all {{ related_posts | minus: 1 }} posts  →
-                                {% elsif related_posts == 1 %}
-                                    {{ related_posts }} post  →
-                                {% else %}
-                                    No posts.
-                                {% endif %}
-                            </a>
-                        </footer>
-                    </article>
-                {% endif %}
-            {% endif %}
-
+    <!-- The footer at the very bottom of the screen -->
+    <footer class="site-footer outer">
+        <div class="site-footer-content inner">
+            <section class="copyright"><a href="{{ site.url }}{{ site.baseurl }}">{{ site.title }}</a> &copy; {{  site.time | date: '%Y' }}</section>
+            <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
+                <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> </section>
 
         </div>
-    </div>
-</aside>
+    </footer>
+
+</div>
 
 
-<!-- /post -->
+<!-- highlight.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.10.0/components/prism-abap.min.js"></script>
+<script>$(document).ready(function() {
+    $('pre code').each(function(i, block) {
+        hljs.highlightBlock(block);
+    });
+});</script>
 
-<!-- The #contentFor helper here will send everything inside it up to the matching #block helper found in default.hbs -->
+<!-- jQuery + Fitvids, which makes all video embeds responsive -->
+<script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+</script>
+<script type="text/javascript" src="{{ site.baseurl }}assets/js/jquery.fitvids.js"></script>
+<script type="text/javascript" src="https://demo.ghost.io/assets/js/jquery.fitvids.js?v=724281a32e"></script>
+
+
+<!-- Paginator increased to "infinit" in _config.yml -->
+<!-- if paginator.posts  -->
+<!-- <script>
+    var maxPages = parseInt('{{ paginator.total_pages }}');
+</script>
+<script src="{{ site.baseurl }}assets/js/infinitescroll.js"></script> -->
+<!-- /endif -->
+
+{% if paginator.total_pages > site.paginate %}
+<script>
+    var maxPages = parseInt('{{ paginator.total_pages }}');
+</script>
+<script src="{{ site.baseurl }}assets/js/infinitescroll.js"></script>
+{% endif %}
+
+
+<!-- Add Google Analytics  -->
+{% include analytics.html %}
+
+<!-- The #block helper will pull in data from the #contentFor other template files. In this case, there's some JavaScript which we only want to use in post.hbs, but it needs to be included down here, after jQuery has already loaded. -->
+{% if page.class == "post-template" %}
+{% include post-scripts.html %}
+{% elsif page.class == "page-template" %}
+{% include page-scripts.html %}
+{% elsif page.class == "styret-template" %}
+{% include post-scripts.html %}
+{% endif %}
+
+<!-- Ghost outputs important scripts and data with this tag - it should always be the very last thing before the closing body tag -->
+<!-- ghost_foot -->
+
+</body>
+</html>
